@@ -17,6 +17,14 @@ function Home() {
     { id: 10, name: 'Orange Juice', price: 3.99, unit: '/ l', category: 'Beverages', emoji: '🧃' },
   ]
 
+  // Offers data
+  const offers = [
+    { id: 101, name: 'Red Apples', originalPrice: 5.99, offerPrice: 2.99, offerText: 'Buy 2 at 2.99', category: 'Fruits', emoji: '🍎' },
+    { id: 102, name: 'Organic Milk', originalPrice: 6.99, offerPrice: 3.49, offerText: 'Buy 2 at 2.99', category: 'Dairy', emoji: '🥛' },
+    { id: 103, name: 'Bananas', originalPrice: 3.99, offerPrice: 1.29, offerText: 'Buy 2 at 2.99', category: 'Fruits', emoji: '🍌' },
+    { id: 104, name: 'Cheddar Cheese', originalPrice: 8.99, offerPrice: 4.59, offerText: 'Buy 2 at 2.99', category: 'Dairy', emoji: '🧀' },
+  ]
+
   const [cart, setCart] = useState([])
   
   const featuredProducts = products.filter(p => p.tag === 'Best Seller')
@@ -49,7 +57,7 @@ function Home() {
           <h1>Fresh Groceries, Faster Checkout</h1>
           <p>Shop the best quality products at great prices!</p>
           <div className="hero-categories">
-            {['Fruits','Dairy','Snacks','Frozen','Beverages'].map((c, idx) => (
+            {['Home','Shop All','Contact Us'].map((c, idx) => (
               <button key={c} className={`hero-cat-btn ${idx === 0 ? 'active' : ''}`}>{c}</button>
             ))}
           </div>
@@ -67,6 +75,26 @@ function Home() {
                   <div className="product-name">{p.name}</div>
                   <div className="product-price">${p.price.toFixed(2)} <span className="unit">{p.unit}</span></div>
                   <button className="add-btn" onClick={() => addToCart(p)}>Add to Cart</button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="offers-section">
+          <h3>🎉 Special Offers</h3>
+          <div className="offers-grid">
+            {offers.map(offer => (
+              <article key={offer.id} className="offer-card">
+                <div className="offer-badge">Special Deal</div>
+                <div className="offer-img">{offer.emoji}</div>
+                <div className="offer-body">
+                  <div className="offer-name">{offer.name}</div>
+                  <div className="price-section">
+                    <div className="original-price">${offer.originalPrice.toFixed(2)}</div>
+                  </div>
+                  <div className="offer-text">{offer.offerText}</div>
+                  <button className="add-btn offer-btn" onClick={() => addToCart(offer)}>Add to Cart</button>
                 </div>
               </article>
             ))}
