@@ -2,7 +2,7 @@ import { useState } from 'react'
 import React from 'react'
 import './Home.css'
 
-function Home() {
+function Home({ onNavigate }) {
   // Enhanced product data with categories
   const products = [
     { id: 1, name: 'Red Apples', price: 2.99, unit: '/ lb', tag: 'Best Seller', category: 'Fruits', emoji: '🍎' },
@@ -59,7 +59,20 @@ function Home() {
           <p>Shop the best quality products at great prices!</p>
           <div className="hero-categories">
             {['Home','Shop All','Contact Us'].map((c, idx) => (
-              <button key={c} className={`hero-cat-btn ${idx === 0 ? 'active' : ''}`}>{c}</button>
+              <button 
+                key={c} 
+                className={`hero-cat-btn ${idx === 0 ? 'active' : ''}`}
+                onClick={() => {
+                  if (c === 'Shop All') {
+                    onNavigate && onNavigate('products')
+                  } else if (c === 'Contact Us') {
+                    // Handle Contact Us
+                    alert('Contact Us page coming soon!')
+                  }
+                }}
+              >
+                {c}
+              </button>
             ))}
           </div>
         </div>
@@ -105,7 +118,27 @@ function Home() {
         </section>
 
         <section className="shop-grid">
-          <h3>Shop All Products</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.2rem' }}>
+            <h3>Shop All Products</h3>
+            <button 
+              onClick={() => onNavigate && onNavigate('products')}
+              style={{
+                background: 'var(--accent)',
+                color: '#fff',
+                border: 'none',
+                padding: '0.7rem 1.5rem',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: '700',
+                fontSize: '0.95rem',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => e.target.style.background = 'var(--accent-light)'}
+              onMouseOut={(e) => e.target.style.background = 'var(--accent)'}
+            >
+              View All →
+            </button>
+          </div>
           <div className="grid">
             {products.map(p => (
               <article key={p.id} className="product-card">
