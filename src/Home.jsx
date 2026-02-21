@@ -15,6 +15,7 @@ function Home() {
     { id: 8, name: 'Frozen Pizza', price: 6.99, unit: '/ pc', category: 'Frozen', emoji: '🍕' },
     { id: 9, name: 'Broccoli', price: 2.49, unit: '/ bunch', category: 'Vegetables', emoji: '🥦' },
     { id: 10, name: 'Orange Juice', price: 3.99, unit: '/ l', category: 'Beverages', emoji: '🧃' },
+    { id: 11, name: 'Maggi Whole Wheat Pack of 3', price: 1.49, unit: '/ pack', tag: 'Best Seller', category: 'Snacks', image: '/71R+kuYnovL._AC_UF894,1000_QL80_.jpg' },
   ]
 
   // Offers data
@@ -70,7 +71,9 @@ function Home() {
           <div className="seller-list">
             {products.filter(p => p.tag === 'Best Seller').map(p => (
               <article key={p.id} className="product-card small">
-                <div className="product-img">{p.emoji}</div>
+                <div className="product-img">
+                  {p.image ? <img src={p.image} alt={p.name} /> : p.emoji}
+                </div>
                 <div className="product-body">
                   <div className="product-name">{p.name}</div>
                   <div className="product-price">${p.price.toFixed(2)} <span className="unit">{p.unit}</span></div>
@@ -106,7 +109,9 @@ function Home() {
           <div className="grid">
             {products.map(p => (
               <article key={p.id} className="product-card">
-                <div className="product-img large">{p.emoji}</div>
+                <div className="product-img large">
+                  {p.image ? <img src={p.image} alt={p.name} /> : p.emoji}
+                </div>
                 <div className="product-body">
                   <div className="product-name">{p.name}</div>
                   <div className="product-price">${p.price.toFixed(2)} <span className="unit">{p.unit}</span></div>
