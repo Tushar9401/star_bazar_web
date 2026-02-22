@@ -32,6 +32,8 @@ function Products({ selectedCategory = null, onNavigate }) {
   ]
 
   const [cart, setCart] = useState([])
+  const [quantities, setQuantities] = useState({})
+  const [addingToCart, setAddingToCart] = useState({})
   const [filters, setFilters] = useState({
     category: selectedCategory || 'all',
     priceRange: [0, 15],
@@ -44,6 +46,44 @@ function Products({ selectedCategory = null, onNavigate }) {
   // Get unique brands
   const brands = ['all', ...new Set(allProducts.map(p => p.brand))]
   const categories = ['all', ...new Set(allProducts.map(p => p.category))]
+
+  function handleAddToCartClick(p) {
+    setAddingToCart(prev => ({
+      ...prev,
+      [p.id]: true
+    }))
+    if (!quantities[p.id]) {
+      setQuantities(prev => ({
+        ...prev,
+        [p.id]: 1
+      }))
+    }
+  }
+
+  function handleIncreaseQty(p) {
+    setQuantities(prev => ({
+      ...prev,
+      [p.id]: (prev[p.id] || 1) + 1
+    }))
+  }
+
+  function handleDecreaseQty(p) {
+    setQuantities(prev => ({
+      ...prev,
+      [p.id]: Math.max(1, (prev[p.id] || 1) - 1)
+    }))
+  }
+
+  function handleConfirmAddToCart(p) {
+    const qty = quantities[p.id] || 1
+    for (let i = 0; i < qty; i++) {
+      setCart((c) => [...c, p])
+    }
+    setAddingToCart(prev => ({
+      ...prev,
+      [p.id]: false
+    }))
+  }
 
   // Filter products
   let filteredProducts = allProducts.filter(p => {
@@ -77,10 +117,6 @@ function Products({ selectedCategory = null, onNavigate }) {
       ...prev,
       priceRange: value
     }))
-  }
-
-  const addToCart = (product) => {
-    setCart(prev => [...prev, product])
   }
 
   const resetFilters = () => {
@@ -247,13 +283,27 @@ function Products({ selectedCategory = null, onNavigate }) {
                     <div className="product-price-full">
                       ${product.price.toFixed(2)} <span className="unit">{product.unit}</span>
                     </div>
-                    <button 
-                      className="add-btn-full"
-                      onClick={() => addToCart(product)}
-                      disabled={product.availability === 'out-of-stock'}
-                    >
-                      {product.availability === 'out-of-stock' ? 'Out of Stock' : 'Add to Cart'}
-                    </button>
+                    {product.availability === 'out-of-stock' ? (
+                      <button className="add-btn-full disabled-btn" disabled>
+                        Out of Stock
+                      </button>
+                    ) : !addingToCart[product.id] ? (
+                      <button 
+                        className="add-btn-full"
+                        onClick={() => handleAddToCartClick(product)}
+                      >
+                        Add to Cart
+                      </button>
+                    ) : (
+                      <div className="qty-selector-full">
+                        <button className="qty-btn-full minus" onClick={() => handleDecreaseQty(product)}>−</button>
+                        <div className="qty-display-full">
+                          <span className="qty-value-full">{quantities[product.id] || 1}</span>
+                        </div>
+                        <button className="qty-btn-full plus" onClick={() => handleIncreaseQty(product)}>+</button>
+                        <button className="confirm-add-btn-full" onClick={() => handleConfirmAddToCart(product)}>Add to Cart</button>
+                      </div>
+                    )}
                   </div>
                 </article>
               ))}

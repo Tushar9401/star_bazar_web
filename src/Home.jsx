@@ -27,11 +27,47 @@ function Home({ onNavigate }) {
   ]
 
   const [cart, setCart] = useState([])
+  const [quantities, setQuantities] = useState({})
+  const [addingToCart, setAddingToCart] = useState({})
   
   const featuredProducts = products.filter(p => p.tag === 'Best Seller')
 
-  function addToCart(p) {
-    setCart((c) => [...c, p])
+  function handleAddToCartClick(p) {
+    setAddingToCart(prev => ({
+      ...prev,
+      [p.id]: true
+    }))
+    if (!quantities[p.id]) {
+      setQuantities(prev => ({
+        ...prev,
+        [p.id]: 1
+      }))
+    }
+  }
+
+  function handleIncreaseQty(p) {
+    setQuantities(prev => ({
+      ...prev,
+      [p.id]: (prev[p.id] || 1) + 1
+    }))
+  }
+
+  function handleDecreaseQty(p) {
+    setQuantities(prev => ({
+      ...prev,
+      [p.id]: Math.max(1, (prev[p.id] || 1) - 1)
+    }))
+  }
+
+  function handleConfirmAddToCart(p) {
+    const qty = quantities[p.id] || 1
+    for (let i = 0; i < qty; i++) {
+      setCart((c) => [...c, p])
+    }
+    setAddingToCart(prev => ({
+      ...prev,
+      [p.id]: false
+    }))
   }
 
   return (
@@ -90,7 +126,18 @@ function Home({ onNavigate }) {
                 <div className="product-body">
                   <div className="product-name">{p.name}</div>
                   <div className="product-price">${p.price.toFixed(2)} <span className="unit">{p.unit}</span></div>
-                  <button className="add-btn" onClick={() => addToCart(p)}>Add to Cart</button>
+                  {!addingToCart[p.id] ? (
+                    <button className="add-btn" onClick={() => handleAddToCartClick(p)}>Add to Cart</button>
+                  ) : (
+                    <div className="qty-selector">
+                      <button className="qty-btn minus" onClick={() => handleDecreaseQty(p)}>−</button>
+                      <div className="qty-display">
+                        <span className="qty-value">{quantities[p.id] || 1}</span>
+                      </div>
+                      <button className="qty-btn plus" onClick={() => handleIncreaseQty(p)}>+</button>
+                      <button className="confirm-add-btn" onClick={() => handleConfirmAddToCart(p)}>Add to Cart</button>
+                    </div>
+                  )}
                 </div>
               </article>
             ))}
@@ -110,7 +157,18 @@ function Home({ onNavigate }) {
                     <div className="original-price">${offer.originalPrice.toFixed(2)}</div>
                   </div>
                   <div className="offer-text">{offer.offerText}</div>
-                  <button className="add-btn offer-btn" onClick={() => addToCart(offer)}>Add to Cart</button>
+                  {!addingToCart[offer.id] ? (
+                    <button className="add-btn offer-btn" onClick={() => handleAddToCartClick(offer)}>Add to Cart</button>
+                  ) : (
+                    <div className="qty-selector compact">
+                      <button className="qty-btn minus" onClick={() => handleDecreaseQty(offer)}>−</button>
+                      <div className="qty-display">
+                        <span className="qty-value">{quantities[offer.id] || 1}</span>
+                      </div>
+                      <button className="qty-btn plus" onClick={() => handleIncreaseQty(offer)}>+</button>
+                      <button className="confirm-add-btn" onClick={() => handleConfirmAddToCart(offer)}>Add to Cart</button>
+                    </div>
+                  )}
                 </div>
               </article>
             ))}
@@ -148,7 +206,18 @@ function Home({ onNavigate }) {
                 <div className="product-body">
                   <div className="product-name">{p.name}</div>
                   <div className="product-price">${p.price.toFixed(2)} <span className="unit">{p.unit}</span></div>
-                  <button className="add-btn" onClick={() => addToCart(p)}>Add to Cart</button>
+                  {!addingToCart[p.id] ? (
+                    <button className="add-btn" onClick={() => handleAddToCartClick(p)}>Add to Cart</button>
+                  ) : (
+                    <div className="qty-selector">
+                      <button className="qty-btn minus" onClick={() => handleDecreaseQty(p)}>−</button>
+                      <div className="qty-display">
+                        <span className="qty-value">{quantities[p.id] || 1}</span>
+                      </div>
+                      <button className="qty-btn plus" onClick={() => handleIncreaseQty(p)}>+</button>
+                      <button className="confirm-add-btn" onClick={() => handleConfirmAddToCart(p)}>Add to Cart</button>
+                    </div>
+                  )}
                 </div>
               </article>
             ))}
