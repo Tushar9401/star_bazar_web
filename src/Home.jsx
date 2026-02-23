@@ -2,7 +2,7 @@ import { useState } from 'react'
 import React from 'react'
 import './Home.css'
 
-function Home({ onNavigate }) {
+function Home({ onNavigate, cart, onAddToCart }) {
   // Enhanced product data with categories
   const products = [
     { id: 1, name: 'Red Apples', price: 2.99, unit: '/ lb', tag: 'Best Seller', category: 'Fruits', emoji: '🍎' },
@@ -26,7 +26,6 @@ function Home({ onNavigate }) {
     { id: 104, name: 'Cheddar Cheese', originalPrice: 8.99, offerPrice: 4.59, offerText: 'Buy 2 at 2.99', category: 'Dairy', emoji: '🧀' },
   ]
 
-  const [cart, setCart] = useState([])
   const [quantities, setQuantities] = useState({})
   const [addingToCart, setAddingToCart] = useState({})
   
@@ -61,12 +60,14 @@ function Home({ onNavigate }) {
 
   function handleConfirmAddToCart(p) {
     const qty = quantities[p.id] || 1
-    for (let i = 0; i < qty; i++) {
-      setCart((c) => [...c, p])
-    }
+    onAddToCart(p, qty)
     setAddingToCart(prev => ({
       ...prev,
       [p.id]: false
+    }))
+    setQuantities(prev => ({
+      ...prev,
+      [p.id]: 1
     }))
   }
 
@@ -83,7 +84,7 @@ function Home({ onNavigate }) {
           </div>
           <nav className="header-actions">
             <button className="icon-btn">❤</button>
-            <button className="icon-btn">🛒 <span className="cart-count">{cart.length}</span></button>
+            <button className="icon-btn" onClick={() => onNavigate('checkout')}>🛒 <span className="cart-count">{cart.length}</span></button>
           </nav>
         </div>
       </header>

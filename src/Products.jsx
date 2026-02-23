@@ -2,7 +2,7 @@ import { useState } from 'react'
 import React from 'react'
 import './Products.css'
 
-function Products({ selectedCategory = null, onNavigate }) {
+function Products({ selectedCategory = null, onNavigate, cart, onAddToCart }) {
   // Enhanced product data with categories, brands, and prices
   const allProducts = [
     { id: 1, name: 'Red Apples', price: 2.99, unit: '/ lb', category: 'Fruits', brand: 'FarmFresh', emoji: '🍎', availability: 'in-stock' },
@@ -31,7 +31,6 @@ function Products({ selectedCategory = null, onNavigate }) {
     { id: 24, name: 'Chocolate Bar', price: 1.29, unit: '/ pc', category: 'Snacks', brand: 'SweetTreats', emoji: '🍫', availability: 'in-stock' },
   ]
 
-  const [cart, setCart] = useState([])
   const [quantities, setQuantities] = useState({})
   const [addingToCart, setAddingToCart] = useState({})
   const [filters, setFilters] = useState({
@@ -42,6 +41,8 @@ function Products({ selectedCategory = null, onNavigate }) {
     searchTerm: ''
   })
   const [sortBy, setSortBy] = useState('price-low')
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 12
 
   // Get unique brands
   const brands = ['all', ...new Set(allProducts.map(p => p.brand))]
@@ -76,12 +77,14 @@ function Products({ selectedCategory = null, onNavigate }) {
 
   function handleConfirmAddToCart(p) {
     const qty = quantities[p.id] || 1
-    for (let i = 0; i < qty; i++) {
-      setCart((c) => [...c, p])
-    }
+    onAddToCart(p, qty)
     setAddingToCart(prev => ({
       ...prev,
       [p.id]: false
+    }))
+    setQuantities(prev => ({
+      ...prev,
+      [p.id]: 1
     }))
   }
 
@@ -105,11 +108,17 @@ function Products({ selectedCategory = null, onNavigate }) {
     filteredProducts.sort((a, b) => a.name.localeCompare(b.name))
   }
 
+  // Pagination logic
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const paginatedProducts = filteredProducts.slice(startIndex, startIndex + itemsPerPage)
+
   const handleFilterChange = (filterType, value) => {
     setFilters(prev => ({
       ...prev,
       [filterType]: value
     }))
+    setCurrentPage(1)
   }
 
   const handlePriceChange = (value) => {
@@ -127,6 +136,7 @@ function Products({ selectedCategory = null, onNavigate }) {
       availability: 'all',
       searchTerm: ''
     })
+    setCurrentPage(1)
   }
 
   return (
@@ -146,7 +156,7 @@ function Products({ selectedCategory = null, onNavigate }) {
           </div>
           <nav className="header-actions">
             <button className="icon-btn">❤</button>
-            <button className="icon-btn">🛒 <span className="cart-count">{cart.length}</span></button>
+            <button className="icon-btn" onClick={() => onNavigate('checkout')}>🛒 <span className="cart-count">{cart.length}</span></button>
           </nav>
         </div>
       </header>
@@ -272,7 +282,7 @@ function Products({ selectedCategory = null, onNavigate }) {
             </div>
           ) : (
             <div className="products-grid">
-              {filteredProducts.map(product => (
+              {paginatedProducts.map(product => (
                 <article key={product.id} className="product-card-full">
                   <div className="product-img-full">
                     {product.emoji}
@@ -307,6 +317,37 @@ function Products({ selectedCategory = null, onNavigate }) {
                   </div>
                 </article>
               ))}
+            </div>
+          )}
+
+          {/* Pagination */}
+          {filteredProducts.length > 0 && totalPages > 1 && (
+            <div className="pagination">
+              <button 
+                className="pagination-btn" 
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+              >
+                ← Previous
+              </button>
+              <div className="pagination-numbers">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    className={`pagination-number ${currentPage === page ? 'active' : ''}`}
+                    onClick={() => setCurrentPage(page)}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+              <button 
+                className="pagination-btn"
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+              >
+                Next →
+              </button>
             </div>
           )}
         </section>
