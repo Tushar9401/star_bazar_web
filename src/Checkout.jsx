@@ -193,6 +193,26 @@ function Checkout({ onNavigate, cart, onRemoveFromCart, onClearCart }) {
         <div className="hero-content">
           <h1>Checkout</h1>
           <p>Complete your purchase securely</p>
+          <div className="hero-categories">
+            {['Home','Shop All','Contact Us'].map((c, idx) => (
+              <button 
+                key={c} 
+                className={`hero-cat-btn ${c === 'Checkout' ? 'active' : ''}`}
+                onClick={() => {
+                  if (c === 'Home') {
+                    onNavigate && onNavigate('home')
+                  } else if (c === 'Shop All') {
+                    onNavigate && onNavigate('products')
+                  } else if (c === 'Contact Us') {
+                    // Handle Contact Us
+                    alert('Contact Us page coming soon!')
+                  }
+                }}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 

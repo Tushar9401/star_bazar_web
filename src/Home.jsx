@@ -28,6 +28,7 @@ function Home({ onNavigate, cart, onAddToCart }) {
 
   const [quantities, setQuantities] = useState({})
   const [addingToCart, setAddingToCart] = useState({})
+  const [liked, setLiked] = useState({})
   
   const featuredProducts = products.filter(p => p.tag === 'Best Seller')
 
@@ -68,6 +69,13 @@ function Home({ onNavigate, cart, onAddToCart }) {
     setQuantities(prev => ({
       ...prev,
       [p.id]: 1
+    }))
+  }
+
+  function toggleLike(productId) {
+    setLiked(prev => ({
+      ...prev,
+      [productId]: !prev[productId]
     }))
   }
 
@@ -118,12 +126,19 @@ function Home({ onNavigate, cart, onAddToCart }) {
       <main className="container">
         <section className="best-sellers">
           <h3>Best Sellers</h3>
-          <div className="seller-list">
+          <div className="grid">
             {products.filter(p => p.tag === 'Best Seller').map(p => (
-              <article key={p.id} className="product-card small">
+              <article key={p.id} className="product-card">
                 <div className="product-img">
                   {p.image ? <img src={p.image} alt={p.name} /> : p.emoji}
                 </div>
+                <button 
+                  className={`heart-btn ${liked[p.id] ? 'liked' : ''}`}
+                  onClick={() => toggleLike(p.id)}
+                  title={liked[p.id] ? 'Remove from favorites' : 'Add to favorites'}
+                >
+                  {liked[p.id] ? '❤' : '🤍'}
+                </button>
                 <div className="product-body">
                   <div className="product-name">{p.name}</div>
                   <div className="product-price">${p.price.toFixed(2)} <span className="unit">{p.unit}</span></div>
@@ -147,15 +162,18 @@ function Home({ onNavigate, cart, onAddToCart }) {
 
         <section className="offers-section">
           <h3>🎉 Special Offers</h3>
-          <div className="offers-grid">
+          <div className="grid">
             {offers.map(offer => (
               <article key={offer.id} className="offer-card">
                 <div className="offer-badge">Special Deal</div>
-                <div className="offer-img">{offer.emoji}</div>
-                <div className="offer-body">
-                  <div className="offer-name">{offer.name}</div>
+                <div className="product-img large">
+                  {offer.emoji}
+                </div>
+                <div className="product-body">
+                  <div className="product-name">{offer.name}</div>
                   <div className="price-section">
                     <div className="original-price">${offer.originalPrice.toFixed(2)}</div>
+                    <div className="offer-price">${offer.offerPrice.toFixed(2)}</div>
                   </div>
                   <div className="offer-text">{offer.offerText}</div>
                   {!addingToCart[offer.id] ? (
@@ -204,6 +222,13 @@ function Home({ onNavigate, cart, onAddToCart }) {
                 <div className="product-img large">
                   {p.image ? <img src={p.image} alt={p.name} /> : p.emoji}
                 </div>
+                <button 
+                  className={`heart-btn ${liked[p.id] ? 'liked' : ''}`}
+                  onClick={() => toggleLike(p.id)}
+                  title={liked[p.id] ? 'Remove from favorites' : 'Add to favorites'}
+                >
+                  {liked[p.id] ? '❤' : '🤍'}
+                </button>
                 <div className="product-body">
                   <div className="product-name">{p.name}</div>
                   <div className="product-price">${p.price.toFixed(2)} <span className="unit">{p.unit}</span></div>

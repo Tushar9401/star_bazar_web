@@ -33,6 +33,7 @@ function Products({ selectedCategory = null, onNavigate, cart, onAddToCart }) {
 
   const [quantities, setQuantities] = useState({})
   const [addingToCart, setAddingToCart] = useState({})
+  const [liked, setLiked] = useState({})
   const [filters, setFilters] = useState({
     category: selectedCategory || 'all',
     priceRange: [0, 15],
@@ -85,6 +86,13 @@ function Products({ selectedCategory = null, onNavigate, cart, onAddToCart }) {
     setQuantities(prev => ({
       ...prev,
       [p.id]: 1
+    }))
+  }
+
+  function toggleLike(productId) {
+    setLiked(prev => ({
+      ...prev,
+      [productId]: !prev[productId]
     }))
   }
 
@@ -166,6 +174,24 @@ function Products({ selectedCategory = null, onNavigate, cart, onAddToCart }) {
         <div className="hero-content-products">
           <h1>Shop All Products</h1>
           <p>Browse our complete collection of fresh groceries</p>
+          <div className="hero-categories">
+            {['Home','Shop All','Contact Us'].map((c, idx) => (
+              <button 
+                key={c} 
+                className={`hero-cat-btn ${c === 'Shop All' ? 'active' : ''}`}
+                onClick={() => {
+                  if (c === 'Home') {
+                    onNavigate && onNavigate('home')
+                  } else if (c === 'Contact Us') {
+                    // Handle Contact Us
+                    alert('Contact Us page coming soon!')
+                  }
+                }}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -287,6 +313,13 @@ function Products({ selectedCategory = null, onNavigate, cart, onAddToCart }) {
                   <div className="product-img-full">
                     {product.emoji}
                   </div>
+                  <button 
+                    className={`heart-btn ${liked[product.id] ? 'liked' : ''}`}
+                    onClick={() => toggleLike(product.id)}
+                    title={liked[product.id] ? 'Remove from favorites' : 'Add to favorites'}
+                  >
+                    {liked[product.id] ? '❤' : '🤍'}
+                  </button>
                   <div className="product-body-full">
                     <div className="product-name-full">{product.name}</div>
                     <div className="product-brand">{product.brand}</div>
