@@ -5,32 +5,42 @@ import './Home.css'
 function Home({ onNavigate, cart, onAddToCart }) {
   // Enhanced product data with categories
   const products = [
-    { id: 1, name: 'Red Apples', price: 2.99, unit: '/ lb', tag: 'Best Seller', category: 'Fruits', emoji: '🍎' },
-    { id: 2, name: 'Organic Milk', price: 3.49, unit: '/ l', tag: 'Best Seller', category: 'Dairy', emoji: '🥛' },
-    { id: 3, name: 'Potato Chips', price: 1.99, unit: '/ pc', tag: 'Best Seller', category: 'Snacks', emoji: '🥔' },
-    { id: 4, name: 'Fresh Chicken', price: 5.99, unit: '/ lb', tag: 'Best Seller', category: 'Proteins', emoji: '🍗' },
+    { id: 1, name: 'Red Apples', price: 2.99, unit: '/ lb', tag: 'Best Seller', category: 'Fruits', emoji: '🍎', nutritionImage: '/nutrition_placeholder.png' },
+    { id: 2, name: 'Organic Milk', price: 3.49, unit: '/ l', tag: 'Best Seller', category: 'Dairy', emoji: '🥛', nutritionImage: '/nutrition_placeholder.png' },
+    { id: 3, name: 'Potato Chips', price: 1.99, unit: '/ pc', tag: 'Best Seller', category: 'Snacks', emoji: '🥔', nutritionImage: '/nutrition_placeholder.png' },
+    { id: 4, name: 'Fresh Chicken', price: 5.99, unit: '/ lb', tag: 'Best Seller', category: 'Proteins', emoji: '🍗', nutritionImage: '/nutrition_placeholder.png' },
     { id: 5, name: 'Bananas', price: 1.29, unit: '/ lb', category: 'Fruits', emoji: '🍌' },
     { id: 6, name: 'Cheddar Cheese', price: 4.59, unit: '/ 200g', category: 'Dairy', emoji: '🧀' },
     { id: 7, name: 'Blueberry Yogurt', price: 2.49, unit: '/ cup', category: 'Dairy', emoji: '🍯' },
     { id: 8, name: 'Frozen Pizza', price: 6.99, unit: '/ pc', category: 'Frozen', emoji: '🍕' },
     { id: 9, name: 'Broccoli', price: 2.49, unit: '/ bunch', category: 'Vegetables', emoji: '🥦' },
     { id: 10, name: 'Orange Juice', price: 3.99, unit: '/ l', category: 'Beverages', emoji: '🧃' },
-    { id: 11, name: 'Maggi Whole Wheat Pack of 3', price: 1.49, unit: '/ pack', tag: 'Best Seller', category: 'Snacks', image: '/71R+kuYnovL._AC_UF894,1000_QL80_.jpg' },
+    { id: 11, name: 'Maggi Whole Wheat Pack of 3', price: 1.49, unit: '/ pack', tag: 'Best Seller', category: 'Snacks', image: '/WhatsApp Image 2026-02-27 at 8.25.30 PM.jpeg', nutritionImage: '/WhatsApp Image 2026-02-27 at 8.25.49 PM.jpeg' },
   ]
 
   // Offers data
   const offers = [
-    { id: 101, name: 'Red Apples', originalPrice: 5.99, offerPrice: 2.99, offerText: 'Buy 2 at 2.99', category: 'Fruits', emoji: '🍎' },
-    { id: 102, name: 'Organic Milk', originalPrice: 6.99, offerPrice: 3.49, offerText: 'Buy 2 at 2.99', category: 'Dairy', emoji: '🥛' },
-    { id: 103, name: 'Bananas', originalPrice: 3.99, offerPrice: 1.29, offerText: 'Buy 2 at 2.99', category: 'Fruits', emoji: '🍌' },
-    { id: 104, name: 'Cheddar Cheese', originalPrice: 8.99, offerPrice: 4.59, offerText: 'Buy 2 at 2.99', category: 'Dairy', emoji: '🧀' },
+    { id: 101, name: 'Red Apples', originalPrice: 5.99, offerPrice: 2.99, offerText: 'Buy 2 at 2.99', category: 'Fruits', emoji: '🍎', nutritionImage: '/nutrition_placeholder.png' },
+    { id: 102, name: 'Organic Milk', originalPrice: 6.99, offerPrice: 3.49, offerText: 'Buy 2 at 2.99', category: 'Dairy', emoji: '🥛', nutritionImage: '/nutrition_placeholder.png' },
+    { id: 103, name: 'Bananas', originalPrice: 3.99, offerPrice: 1.29, offerText: 'Buy 2 at 2.99', category: 'Fruits', emoji: '🍌', nutritionImage: '/nutrition_placeholder.png' },
+    { id: 104, name: 'Cheddar Cheese', originalPrice: 8.99, offerPrice: 4.59, offerText: 'Buy 2 at 2.99', category: 'Dairy', emoji: '🧀', nutritionImage: '/nutrition_placeholder.png' },
   ]
 
   const [quantities, setQuantities] = useState({})
   const [addingToCart, setAddingToCart] = useState({})
   const [liked, setLiked] = useState({})
-  
+  const [selectedNutrition, setSelectedNutrition] = useState(null)
+
   const featuredProducts = products.filter(p => p.tag === 'Best Seller')
+
+  function openNutrition(e, product) {
+    e.stopPropagation()
+    setSelectedNutrition(product)
+  }
+
+  function closeNutritionModal() {
+    setSelectedNutrition(null)
+  }
 
   function handleAddToCartClick(p) {
     setAddingToCart(prev => ({
@@ -103,9 +113,9 @@ function Home({ onNavigate, cart, onAddToCart }) {
           <h1>Fresh Groceries, Faster Checkout</h1>
           <p>Shop the best quality products at great prices!</p>
           <div className="hero-categories">
-            {['Home','Shop All','Contact Us'].map((c, idx) => (
-              <button 
-                key={c} 
+            {['Home', 'Shop All', 'Contact Us'].map((c, idx) => (
+              <button
+                key={c}
                 className={`hero-cat-btn ${idx === 0 ? 'active' : ''}`}
                 onClick={() => {
                   if (c === 'Shop All') {
@@ -129,10 +139,17 @@ function Home({ onNavigate, cart, onAddToCart }) {
           <div className="grid">
             {products.filter(p => p.tag === 'Best Seller').map(p => (
               <article key={p.id} className="product-card">
-                <div className="product-img">
-                  {p.image ? <img src={p.image} alt={p.name} /> : p.emoji}
+                <div className="product-img-container">
+                  <div className="product-img-front">
+                    <div className="product-img">
+                      {p.image ? <img src={p.image} alt={p.name} /> : p.emoji}
+                    </div>
+                    {p.nutritionImage && (
+                      <button className="info-btn" onClick={(e) => openNutrition(e, p)} title="Nutrition Facts"><i>i</i></button>
+                    )}
+                  </div>
                 </div>
-                <button 
+                <button
                   className={`heart-btn ${liked[p.id] ? 'liked' : ''}`}
                   onClick={() => toggleLike(p.id)}
                   title={liked[p.id] ? 'Remove from favorites' : 'Add to favorites'}
@@ -166,8 +183,15 @@ function Home({ onNavigate, cart, onAddToCart }) {
             {offers.map(offer => (
               <article key={offer.id} className="offer-card">
                 <div className="offer-badge">Special Deal</div>
-                <div className="product-img large">
-                  {offer.emoji}
+                <div className="product-img-container large">
+                  <div className="product-img-front">
+                    <div className="product-img large">
+                      {offer.emoji}
+                    </div>
+                    {offer.nutritionImage && (
+                      <button className="info-btn" onClick={(e) => openNutrition(e, offer)} title="Nutrition Facts"><i>i</i></button>
+                    )}
+                  </div>
                 </div>
                 <div className="product-body">
                   <div className="product-name">{offer.name}</div>
@@ -197,7 +221,7 @@ function Home({ onNavigate, cart, onAddToCart }) {
         <section className="shop-grid">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.2rem' }}>
             <h3>Shop All Products</h3>
-            <button 
+            <button
               onClick={() => onNavigate && onNavigate('products')}
               style={{
                 background: 'var(--accent)',
@@ -219,10 +243,17 @@ function Home({ onNavigate, cart, onAddToCart }) {
           <div className="grid">
             {products.map(p => (
               <article key={p.id} className="product-card">
-                <div className="product-img large">
-                  {p.image ? <img src={p.image} alt={p.name} /> : p.emoji}
+                <div className="product-img-container large">
+                  <div className="product-img-front">
+                    <div className="product-img large">
+                      {p.image ? <img src={p.image} alt={p.name} /> : p.emoji}
+                    </div>
+                    {p.nutritionImage && (
+                      <button className="info-btn" onClick={(e) => openNutrition(e, p)} title="Nutrition Facts"><i>i</i></button>
+                    )}
+                  </div>
                 </div>
-                <button 
+                <button
                   className={`heart-btn ${liked[p.id] ? 'liked' : ''}`}
                   onClick={() => toggleLike(p.id)}
                   title={liked[p.id] ? 'Remove from favorites' : 'Add to favorites'}
@@ -264,6 +295,24 @@ function Home({ onNavigate, cart, onAddToCart }) {
           </div>
         </div>
       </footer>
+
+      {/* Quick View Nutrition Modal */}
+      {selectedNutrition && (
+        <div className="nutrition-modal-overlay" onClick={closeNutritionModal}>
+          <div className="nutrition-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="nutrition-modal-header">
+              <h2>{selectedNutrition.name} Nutrition</h2>
+              <button className="close-modal-btn" onClick={closeNutritionModal}>×</button>
+            </div>
+            <div className="nutrition-modal-body">
+              <img src={selectedNutrition.nutritionImage} alt={`${selectedNutrition.name} Nutrition`} />
+            </div>
+            <div className="nutrition-modal-footer">
+              <button className="done-btn" onClick={closeNutritionModal}>Done</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
